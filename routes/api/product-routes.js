@@ -21,9 +21,22 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
-  const productData = await Product.findByPk(req.params.id, {
-    include: [{ model: Category }, { model: Tag }],
-  });
+  try {
+    const productByIdData = await Product.findByPk(req.params.id, {
+      include: [Category, Tag],
+    });
+    productByIdData
+      ? res.json(productByIdData)
+      : res
+          .status(404)
+          .json({ message: "Are You Sure A Product With This ID Exist?" });
+  } catch (error) {
+    console.error(error);
+    res.status(500);
+  }
+  // const productData = await Product.findByPk(req.params.id, {
+  //   include: [{ model: Category }, { model: Tag }],
+  // });
 });
 
 // create new product
